@@ -25,10 +25,15 @@ private:
     int discriminant;
     int power = 0;
 
+    struct member
+    {
+        double n;
+        int power;
+    };
 
     void parser(std::string equation);
     void parseString(std::string str);
-    void parseMember(std::string str);
+    void parseMember(std::vector<std::string> members);
 };
 
 #endif // COMPUTOR_H

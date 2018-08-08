@@ -40,7 +40,7 @@ void Computor::parser(std::string equation)
 
 void Computor::parseString(std::string str)
 {
-    std::deque<std::string> members;
+    std::vector<std::string> members;
     std::string var;
     int f = 1;
     for(int i = 0; i <= str.length(); i++) {
@@ -72,16 +72,35 @@ void Computor::parseString(std::string str)
                     var += '+';
         }
     }
-    std::cout << members.size() << std::endl;
-    for(int i = 0; i <= members.size(); i++)
-        std::cout << members[i] << std::endl;
+    parseMember(members);
 }
 
-void Computor::parseMember(std::string str)
+void Computor::parseMember(std::vector<std::string> members)
 {
-    std::cout << "parseMember; str = " << str << std::endl;
-//    if(std::regex_match(str.c_str(), result, reg))
-//        std::cout << "Good " << result[1] << std::endl;
-//    else
-//        std::cout << "EXEPTION" << std::endl;
+    std::vector<member> memberList;
+    std::cmatch result;
+    std::regex reg("([\\+\\-])?"
+                    "((\\d+)|(\\d+\\.\\d+))?"
+                    "(\\*)?"
+                    "(X\\^)"
+                    "(\\d+)");
+    for(int i = 0; i < members.size(); i++) {
+        if (std::regex_match(members[i].c_str(), result, reg))
+        {
+            std::cout << members[i] << std::endl;
+            member var;
+            std::string s = (std::string)result[1] + (std::string)result[2];
+            if(s != "")
+                var.n = std::stod(s);
+            else
+                var.n = 1;
+            for(int i = 0; i < result.size(); i++)
+                std::cout << result[i] << std::endl;
+//            var.power = std::stoi(result[5]);
+            memberList.push_back(var);
+        }
+
+//    for(int i = 0; i <= members.size(); i++)
+//        std::cout << members[i] << std::endl;
+    }
 }
