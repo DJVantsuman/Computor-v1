@@ -77,6 +77,9 @@ void Computor::parseString(std::string str)
 
 void Computor::parseMember(std::vector<std::string> members)
 {
+    for(int i = 0; i < members.size(); i++) {
+        std::cout << members[i] << std::endl;;
+    }
     std::vector<member> memberList;
     std::cmatch result;
     std::regex reg("([\\+\\-])?"
@@ -89,18 +92,24 @@ void Computor::parseMember(std::vector<std::string> members)
         {
             std::cout << members[i] << std::endl;
             member var;
-            std::string s = (std::string)result[1] + (std::string)result[2];
+            std::string s;
+            for(int j = 0; j < result.size(); j++) {
+                s = result[j];
+            }
+            if (result[2] == "")
+                s = (std::string)result[1] + (std::string)result[5];
+            else
+                s = (std::string)result[1] + (std::string)result[2];
             if(s != "")
                 var.n = std::stod(s);
             else
                 var.n = 1;
-            for(int i = 0; i < result.size(); i++)
-                std::cout << result[i] << std::endl;
-//            var.power = std::stoi(result[5]);
+            var.power = std::stoi(result[7]);
             memberList.push_back(var);
         }
-
-//    for(int i = 0; i <= members.size(); i++)
-//        std::cout << members[i] << std::endl;
+    }
+    for(int i = 0; i < memberList.size(); i++) {
+        std::cout << memberList[i].n << std::endl;
+        std::cout << memberList[i].power << std::endl;
     }
 }
