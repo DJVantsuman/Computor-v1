@@ -19,22 +19,28 @@ public:
     void start(std::string equation);
 
 private:
-    int a = 0;
-    int b = 0;
-    int c = 0;
-    int discriminant;
-    int power = 0;
+    double a = 0;
+    double b = 0;
+    double c = 0;
+    double discriminant;
+    int degree = 0;
+    double x1 = 0;
+    double x2 = 0;
 
     struct member
     {
         int f = 1;
-        float n;
-        int power;
+        double n;
+        int degree;
     };
 
     void parser(std::string str);
     void parseMember(std::vector<std::string> members, int f);
     void culculate(std::vector<member> memberList);
+    void print(int f);
+    std::string getNumber(double n);
+    double my_sqr(double number);
+
 };
 
 #endif // COMPUTOR_H
