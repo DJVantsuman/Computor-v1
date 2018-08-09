@@ -27,13 +27,14 @@ private:
 
     struct member
     {
-        double n;
+        int f = 1;
+        float n;
         int power;
     };
 
-    void parser(std::string equation);
-    void parseString(std::string str);
-    void parseMember(std::vector<std::string> members);
+    void parser(std::string str);
+    void parseMember(std::vector<std::string> members, int f);
+    void culculate(std::vector<member> memberList);
 };
 
 #endif // COMPUTOR_H
