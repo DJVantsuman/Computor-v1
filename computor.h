@@ -29,7 +29,6 @@ private:
 
     struct member
     {
-        int f = 1;
         double n;
         int degree;
     };
@@ -38,7 +37,9 @@ private:
     void parseMember(std::vector<std::string> members, int f);
     void culculate(std::vector<member> memberList);
     void print(int f);
+
     std::string getNumber(double n);
+
     double my_sqr(double number);
 
 };

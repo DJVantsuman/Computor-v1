@@ -20,7 +20,6 @@ void Computor::start(std::string equation)
     {
         std::cout << "EXEPTION: " << e << std::endl;
     }
-
 }
 
 void Computor::parser(std::string str)
@@ -56,7 +55,8 @@ void Computor::parser(std::string str)
 void Computor::parseMember(std::vector<std::string> members, int t)
 {
     std::vector<member> memberList;
-    std::string reducedForm;
+    std::vector<member> reducedList;
+    std::string reducedForm = "";
     std::cmatch result;
     std::regex reg("([\\+\\-])?"
                     "((\\d+)|(\\d+\\.\\d+))?"
@@ -71,7 +71,7 @@ void Computor::parseMember(std::vector<std::string> members, int t)
             if (result[2] == "")
             {
                 s = (std::string)result[1] + std::to_string(1);
-                var.f = 2;
+//                var.f = 2;
             }
             else
                 s = (std::string)result[1] + (std::string)result[2];
@@ -87,34 +87,46 @@ void Computor::parseMember(std::vector<std::string> members, int t)
         else if (members[i] != "0")
             throw "Syntax error in \"" + members[i] + "\"";
     }
-    for(int i = 0; i < memberList.size(); i++) {
-        if(memberList[i].f == 1)
+    for(int i = 0; i < memberList.size(); i++)
+        if(degree < memberList[i].degree)
+            degree = memberList[i].degree;
+    for(int i = 0; i <= degree; i++)
+    {
+        member var;
+        var.n = 0;
+        int f = 0;
+        for(int j = 0; j < memberList.size(); j++)
         {
-            std::string sing;
-            if(memberList[i].n > 0 && i > 0)
-                sing = (" + " + getNumber(memberList[i].n) + " * ");
-            else if (memberList[i].n < 0 && i > 0)
-                sing = (" - " + getNumber(memberList[i].n * -1) + " * ");
-            else
-                sing = (getNumber(memberList[i].n) + " * ");
-            reducedForm += sing;
+            if(memberList[j].degree == i)
+            {
+                f = 1;
+                var.degree = i;
+                var.n += memberList[j].n;
+//                var.f = memberList[j].f;
+            }
         }
-        if(memberList[i].f == 2 && memberList[i].n < 0)
-            reducedForm += (" - X^" + std::to_string(memberList[i].degree));
-        else if (memberList[i].f == 2 && memberList[i].n > 0)
-            reducedForm += (" + X^" + std::to_string(memberList[i].degree));
+        if(f == 1)
+            reducedList.push_back(var);
+    }
+    for(int i = 0 , j = reducedList[i].degree; i < reducedList.size(); i++, j++) {
+        std::string s;
+        if(reducedForm == "")
+            s = getNumber(reducedList[i].n) + " * X^" + std::to_string(j);
+        else if(reducedList[i].n >= 0)
+            s = " + " + getNumber(reducedList[i].n) + " * X^" + std::to_string(j);
         else
-            reducedForm += ("X^" + std::to_string(memberList[i].degree));
+            s = " - " + getNumber(reducedList[i].n * -1) + " * X^" + std::to_string(j);
+        reducedForm += s;
     }
     std::cout << "\nReduced form: " << reducedForm << " = 0" <<std::endl;
-    culculate(memberList);
+    degree = 0;
+    culculate(reducedList);
 }
 
 void Computor::culculate(std::vector<member> memberList)
 {
-    degree = memberList[0].degree;
     for(int i = 0; i < memberList.size(); i++) {
-        if(memberList[i].degree > degree)
+        if((memberList[i].n != 0 && memberList[i].degree > degree) || memberList.size() == 1 )
             degree = memberList[i].degree;
         if(memberList[i].degree == 0)
             c += memberList[i].n;
@@ -122,12 +134,16 @@ void Computor::culculate(std::vector<member> memberList)
             b += memberList[i].n;
         else if(memberList[i].degree == 2)
             a += memberList[i].n;
-        else {
-            std::cout << "Polynomial degree: " << degree << std::endl;
-            std::cout << "The polynomial degree is stricly greater than 2, I can't solve." << std::endl;
-            exit(1);
-        }
     }
+
+    if(degree > 2)
+    {
+        std::cout << "Polynomial degree: " << degree << std::endl;
+        std::cout << "The polynomial degree is stricly greater than 2, I can't solve." << std::endl;
+        exit(1);
+    }
+
+
     discriminant = (b * b) - 4 * a * c;
     std::cout << "Polynomial degree: " << degree << std::endl;
     if(discriminant > 0 && degree == 2)
@@ -146,7 +162,7 @@ void Computor::culculate(std::vector<member> memberList)
         std::cout << x1 << std::endl;
         print(2);
     }
-    else if(discriminant > 0 && degree == 1)
+    else if(degree == 1)
     {
         std::cout << "The solution is: " << std::endl;
         if(c != 0)
@@ -161,8 +177,15 @@ void Computor::culculate(std::vector<member> memberList)
             std::cout << x1 << std::endl;
         }
     }
-    else if(degree == 0 || discriminant < 0)
+    else if(degree == 0 && c > 0)
+    {
+        std::cout << "The solution is: " << std::endl;
+        std::cout << "0" << std::endl;
+        print(4);
+    }
+    else {
         std::cout << "The equation is not solved." << std::endl;
+    }
 }
 
 std::string Computor::getNumber(double n)
@@ -194,7 +217,10 @@ void Computor::print(int f)
 {
     if(f == 1)
     {
-        std::cout << "\nD = b^2 - 4ac = " << (b * b) << " - " << 4 * a * c << " = " << discriminant << std::endl;
+        if(4 * a * c > 0)
+            std::cout << "\nD = b^2 - 4ac = " << (b * b) << " - " << 4 * a * c << " = " << discriminant << std::endl;
+        else
+            std::cout << "\nD = b^2 - 4ac = " << (b * b) << " + " << 4 * a * c * -1 << " = " << discriminant << std::endl;
         std::cout << "            ____________" << std::endl;
         std::cout << "     -b + \\/ b^2 - 4ac"   << std::endl;
         std::cout << "X1 = ------------------- = " << x1 << std::endl;
@@ -207,16 +233,25 @@ void Computor::print(int f)
     }
     else if(f == 2)
     {
-        std::cout << "\n\nD = b^2 - 4ac = " << (b * b) << " - " << 4 * a * c << " = " << discriminant << std::endl;
+        if(4 * a * c > 0)
+            std::cout << "\nD = b^2 - 4ac = " << (b * b) << " - " << 4 * a * c << " = " << discriminant << std::endl;
+        else
+            std::cout << "\nD = b^2 - 4ac = " << (b * b) << " + " << 4 * a * c * -1 << " = " << discriminant << std::endl;
         std::cout << "\n        -b"  << std::endl;
         std::cout << "X1,2 = ---- = " << x1 << std::endl;
         std::cout << "        2a\n" << std::endl;
     }
     else if(f == 3)
     {
-        std::cout << "\n       c"  << std::endl;
-        std::cout << "X = - --- = " << x1 << std::endl;
-        std::cout << "       b\n" << std::endl;
+        std::cout << "\n      " << c  << std::endl;
+        std::cout << "X = - ---- = " << x1 << std::endl;
+        std::cout << "       " << b << std::endl;
+    }
+    else if(f == 4)
+    {
+        std::cout << "\n      0"  << std::endl;
+        std::cout << "X =  ---- = " << x1 << std::endl;
+        std::cout << "     " << c << std::endl;
     }
 }
 
