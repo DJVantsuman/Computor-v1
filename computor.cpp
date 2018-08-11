@@ -28,9 +28,9 @@ void Computor::parser(std::string str)
     std::vector<std::string> members;
     std::string var;
     int t = 0;
-    for(int i = 0; i <= str.length(); i++) {
+    for(int i = 0; i <= (int)str.length(); i++) {
         if((str[i] != '+' && str[i] != '-' && str[i] != '\0') ||
-                ((members.size() == 0 || members.size() == t) && var.size() == 0))
+                ((members.size() == 0 || (int)members.size() == t) && var.size() == 0))
         {
             if (str[i] == '=')
             {
@@ -63,7 +63,7 @@ void Computor::parseMember(std::vector<std::string> members, int t)
                     "(\\*)?"
                     "(X\\^)"
                     "(\\d+)");
-    for(int i = 0; i < members.size(); i++) {
+    for(int i = 0; i < (int)members.size(); i++) {
         if (std::regex_match(members[i].c_str(), result, reg))
         {
             member var;
@@ -87,7 +87,7 @@ void Computor::parseMember(std::vector<std::string> members, int t)
         else if (members[i] != "0")
             throw "Syntax error in \"" + members[i] + "\"";
     }
-    for(int i = 0; i < memberList.size(); i++)
+    for(int i = 0; i < (int)memberList.size(); i++)
         if(degree < memberList[i].degree)
             degree = memberList[i].degree;
     for(int i = 0; i <= degree; i++)
@@ -95,7 +95,7 @@ void Computor::parseMember(std::vector<std::string> members, int t)
         member var;
         var.n = 0;
         int f = 0;
-        for(int j = 0; j < memberList.size(); j++)
+        for(int j = 0; j < (int)memberList.size(); j++)
         {
             if(memberList[j].degree == i)
             {
@@ -108,7 +108,7 @@ void Computor::parseMember(std::vector<std::string> members, int t)
         if(f == 1)
             reducedList.push_back(var);
     }
-    for(int i = 0 , j = reducedList[i].degree; i < reducedList.size(); i++, j++) {
+    for(int i = 0 , j = reducedList[i].degree; i < (int)reducedList.size(); i++, j++) {
         std::string s;
         if(reducedForm == "")
             s = getNumber(reducedList[i].n) + " * X^" + std::to_string(j);
@@ -125,7 +125,7 @@ void Computor::parseMember(std::vector<std::string> members, int t)
 
 void Computor::culculate(std::vector<member> memberList)
 {
-    for(int i = 0; i < memberList.size(); i++) {
+    for(int i = 0; i < (int)memberList.size(); i++) {
         if((memberList[i].n != 0 && memberList[i].degree > degree) || memberList.size() == 1 )
             degree = memberList[i].degree;
         if(memberList[i].degree == 0)
@@ -191,13 +191,12 @@ void Computor::culculate(std::vector<member> memberList)
 std::string Computor::getNumber(double n)
 {
     std::string var = std::to_string(n), s, result;
-    int f = 0;
     int i = 0;
-    for(; i < var.size(); i++)
+    for(; i < (int)var.size(); i++)
         if(var[i] != '.' )
             result += var[i];
         else break;
-    for(; i < var.size(); i++)
+    for(; i < (int)var.size(); i++)
     {
         if(var[i] == '.' && var[i + 1] != '0')
         {
