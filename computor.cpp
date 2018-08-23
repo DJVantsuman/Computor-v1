@@ -24,7 +24,6 @@ void Computor::start(std::string equation)
 
 void Computor::parser(std::string str)
 {
-    std::cout << str << std::endl;
     std::vector<std::string> members;
     std::string var;
     int t = 0;
@@ -71,7 +70,6 @@ void Computor::parseMember(std::vector<std::string> members, int t)
             if (result[2] == "")
             {
                 s = (std::string)result[1] + std::to_string(1);
-//                var.f = 2;
             }
             else
                 s = (std::string)result[1] + (std::string)result[2];
@@ -87,9 +85,10 @@ void Computor::parseMember(std::vector<std::string> members, int t)
         else if (members[i] != "0")
             throw "Syntax error in \"" + members[i] + "\"";
     }
-    for(int i = 0; i < (int)memberList.size(); i++)
-        if(degree < memberList[i].degree)
+    for(int i = 0; i < (int)memberList.size(); i++) {
+        if (degree < memberList[i].degree)
             degree = memberList[i].degree;
+    }
     for(int i = 0; i <= degree; i++)
     {
         member var;
@@ -102,7 +101,6 @@ void Computor::parseMember(std::vector<std::string> members, int t)
                 f = 1;
                 var.degree = i;
                 var.n += memberList[j].n;
-//                var.f = memberList[j].f;
             }
         }
         if(f == 1)
@@ -117,6 +115,11 @@ void Computor::parseMember(std::vector<std::string> members, int t)
         else
             s = " - " + getNumber(reducedList[i].n * -1) + " * X^" + std::to_string(j);
         reducedForm += s;
+    }
+    if(reducedList.size() == 1 && reducedList[0].n == 0)
+    {
+        std::cout << "All natural values of x satisfy the inequality" << std::endl;
+        exit(0);
     }
     std::cout << "\nReduced form: " << reducedForm << " = 0" <<std::endl;
     degree = 0;
@@ -183,9 +186,11 @@ void Computor::culculate(std::vector<member> memberList)
         std::cout << "0" << std::endl;
         print(4);
     }
-    else {
-        std::cout << "The equation is not solved." << std::endl;
+    else if(discriminant < 0){
+        std::cout << "Discriminant is strictly negative, the equation is not solved." << std::endl;
     }
+    else
+        std::cout << "The equation is not solved." << std::endl;
 }
 
 std::string Computor::getNumber(double n)
@@ -244,7 +249,7 @@ void Computor::print(int f)
     {
         std::cout << "\n      " << c  << std::endl;
         std::cout << "X = - ---- = " << x1 << std::endl;
-        std::cout << "       " << b << std::endl;
+        std::cout << "      " << b << std::endl;
     }
     else if(f == 4)
     {
